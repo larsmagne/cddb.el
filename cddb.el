@@ -148,7 +148,7 @@ buffer with the cddb entry will be returned."
 	;; Just use the first match.
 	(setq category (match-string 1)
 	      discid (match-string 2))
-	;; Flust to the end of the matches.
+	;; Flush to the end of the matches.
 	(expect "^\\."))
        ;; We didn't find disc.
        ("^[2345]"
@@ -406,10 +406,7 @@ Keys are `frames', `length', `id', `artist', `title', `tracks',
 	  (buf (current-buffer))
 	  (id (cddb-parse (current-buffer) 'id)))
       (message-mail
-       ;;"cddb-submit@submit.cddb.com"
-       ;;"test-submit@freedb.org"
        "freedb-submit@freedb.org"
-       ;;"cddb-test@submit.cddb.com"
        (concat "cddb " genre " " id))
       (insert-buffer buf)
       (message-send))))
@@ -500,7 +497,6 @@ Keys are `frames', `length', `id', `artist', `title', `tracks',
 	(set-buffer (cdr entry))
 	(cddb-edit (cddb-merge (cddb-parse (current-buffer)) frames)
 		   (car entry))))))
-
 
 (defun cddb-compute-cddb-id (entry)
   (let ((frames (cdr (assoc 'frames entry)))
