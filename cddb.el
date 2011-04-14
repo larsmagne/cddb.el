@@ -71,14 +71,6 @@ buffer with the cddb entry will be returned."
 	 (ntracks (length frames))
 	 result beg stop category file cat)
     (cond
-     (t
-      (cddb-query-remote entry))
-     ((file-exists-p
-       (setq file (concat "/music/data/my-cddb/" discid)))
-      (save-excursion
-	(set-buffer (generate-new-buffer " *cddb*"))
-	(insert-file-contents file)
-	(cons "rock" (current-buffer))))
      ((file-exists-p
        (setq file (concat cddb-directory "data/new-cdda/" discid)))
       (save-excursion
