@@ -1,0 +1,25 @@
+cddb.el is a package for querying, editing and submitting FreeDB
+entries.
+
+The idea is that you get a list of frames from some source -- for
+instance, by using the cd-discid program to examine a CD's Table Of
+Contents.  The format may differ from program to program, but an
+example function is included in cddb.el, `cddb-get-toc-with-discid'.
+You'd use the output from this function as the input to `cddb-query',
+which will query FreeDB, and give you a buffer with the results.  You
+can edit the results, and submit the changes.
+
+Set `cddb-cdrom-device' to something useful before trying to use the
+sample function.
+
+  (setq cddb-cdrom-device "/dev/scd0")
+
+The command `cddb-read-cd' is a likely start.  Put a CD in your
+player, and `M-x cddb-read-cd' to see if you get any results.
+
+cddb.el requires expect.el and a program that can give you a TOC, like
+cd-discid.
+
+It is written by Lars Magne Ingbrigtsen <larsi@gnus.org>, and is
+released under the GNU General Public License.
+
