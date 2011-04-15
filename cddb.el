@@ -91,7 +91,7 @@ buffer with the cddb entry will be returned."
 	  (insert-file-contents file)
 	  (cons cat (current-buffer)))))
      (cddb-remote-p
-      (cddb-query-remote)))))
+      (cddb-query-remote entry)))))
 
 (defun cddb-query-remote (entry)
   (catch 'found
