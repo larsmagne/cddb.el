@@ -464,10 +464,10 @@ Keys are `frames', `length', `id', `artist', `title', `tracks',
   (setcdr (nthcdr (1- length) list) nil)
   list)
 
-(defun cddb-get-toc-with-discid ()
+(defun cddb-get-toc-with-discid (&optional cdrom)
   "Get the Table Of Contents by using the cd-discid extenal command."
   (let ((output (shell-command-to-string
-		 (format "cd-discid %s" cddb-cdrom-device)))
+		 (format "cd-discid %s" (or cdrom cddb-cdrom-device))))
 	entry)
     (if (not output)
 	(error "No output from cd-discid")
