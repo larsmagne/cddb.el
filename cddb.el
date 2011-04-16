@@ -464,7 +464,7 @@ Keys are `frames', `length', `id', `artist', `title', `tracks',
   (setcdr (nthcdr (1- length) list) nil)
   list)
 
-(defun cddb-get-toc-with-discid (&optional cdrom)
+(defun cddb-toc (&optional cdrom)
   "Get the Table Of Contents by using the cd-discid extenal command."
   (let ((output (shell-command-to-string
 		 (format "cd-discid %s" (or cdrom cddb-cdrom-device))))
@@ -481,7 +481,7 @@ Keys are `frames', `length', `id', `artist', `title', `tracks',
 (defun cddb-read-cd ()
   "Examing a cd, query the server and enter a buffer to edit the entry."
   (interactive)
-  (let* ((frames (cddb-get-toc-with-discid))
+  (let* ((frames (cddb-toc))
 	 (entry (cddb-query frames)))
     (if (not entry)
 	(cddb-edit (cdr entry) (car entry))
