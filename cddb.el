@@ -194,6 +194,8 @@ Keys are `frames', `length', `id', `artist', `title', `tracks',
       (goto-char (point-min))
       (when (search-forward "Track frame offsets:" nil t)
 	(forward-line 1)
+	(while (looking-at "#$")
+	  (forward-line 1))
 	(while (looking-at "#[ \t]+\\([0-9]+\\)[ \t]*$")
 	  (push (string-to-number (match-string 1)) frames)
 	  (forward-line 1)))
