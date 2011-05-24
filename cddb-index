@@ -1,0 +1,29 @@
+#!/usr/bin/perl
+
+$index = $ARGV[1];
+$cddb = $ARGV[0];
+
+system ("find $cddb -type f | xargs grep ^DTITLE | sed 's/DTITLE=//' | sed 's%$cddb%%' > $index");
+
+open (IN, "$index") || die;
+open (OUT, ">$index.tmp") || die;
+
+while (<IN>) {
+    /^([^:]+):(.*\n)/;
+    $new = $1;
+    if ($new eq $old) {
+	chop ($line);
+	$line .= $2;
+    } else {
+	print OUT $line if ($line);
+	$line = $_;
+	$old = $new;
+    }
+}
+
+#system ("sort -t : -d -f +1 $index.tmp > $index.sort");
+
+#unlink "$index.tmp";
+
+
+

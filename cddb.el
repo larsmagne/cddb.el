@@ -113,6 +113,7 @@ buffer with the cddb entry will be returned."
 	 result beg stop category file cat)
     ;; Query the remote CDDB server.
     (with-expect (list "telnet" cddb-server cddb-server-port)
+      (set-process-query-on-exit-flag (get-buffer-process (current-buffer)) nil)
       ;; Get welcome message and log in.
       (expect "^2"
 	(expect-send (format
@@ -510,6 +511,23 @@ Keys are `frames', `length', `id', `artist', `title', `tracks',
       (incf ret (% n 10))
       (setq n (truncate (/ n 10))))
     ret))
+
+(defun cddb-grep (artist)
+  (let (alist id title)
+    (save-excursion
+      (set-buffer (get-buffer-create " *jukebox*"))
+      (erase-buffer)
+      (let ((default-directory "/"))
+	(call-process "grep" nil t nil "-i" (concat ":" artist)
+		      (concat cddb-directory "data/cddb-index")))
+      (goto-char (point-min))
+      (while (re-search-forward "^\\(^[^:]+\\):\\(.*\\)" nil t)
+	(setq title (match-string 2)
+	      id (match-string 1))
+	(when (string-match "/ *" title)
+	  (setq title (substring title (match-end 0))))
+	(push (cons title id) alist))
+      alist)))
 
 (provide 'cddb)
 
