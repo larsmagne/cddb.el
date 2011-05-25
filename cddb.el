@@ -39,7 +39,7 @@
 (defvar cddb-server-port "888"
   "Port to connect to.")
 
-(defvar cddb-directory "/usr/local/cddb/"
+(defvar cddb-directory "/data/music/data/cddb/"
   "*Where the cddb files are.")
 
 (defvar cddb-remote-p t
@@ -72,7 +72,7 @@ buffer with the cddb entry will be returned."
 	 result beg stop category file cat)
     (cond
      ((file-exists-p
-       (setq file (concat cddb-directory "data/new-cdda/" discid)))
+       (setq file (concat cddb-directory "new-cdda/" discid)))
       (save-excursion
 	(set-buffer (generate-new-buffer " *cddb*"))
 	(insert-file-contents file)
@@ -380,7 +380,7 @@ Keys are `frames', `length', `id', `artist', `title', `tracks',
 		 (not arg))
 	(cddb-send genre))
       (set-buffer-modified-p nil))
-    (cddb-write-file (concat cddb-directory "data/new-cdda/"
+    (cddb-write-file (concat cddb-directory "new-cdda/"
 			     (cddb-get 'id alist))
 		     alist))
   (run-hooks 'cddb-submit-hook)
@@ -514,12 +514,10 @@ Keys are `frames', `length', `id', `artist', `title', `tracks',
 
 (defun cddb-grep (artist)
   (let (alist id title)
-    (save-excursion
-      (set-buffer (get-buffer-create " *jukebox*"))
-      (erase-buffer)
+    (with-temp-buffer
       (let ((default-directory "/"))
 	(call-process "grep" nil t nil "-i" (concat ":" artist)
-		      (concat cddb-directory "data/cddb-index")))
+		      (expand-file-name "cddb-index" cddb-directory)))
       (goto-char (point-min))
       (while (re-search-forward "^\\(^[^:]+\\):\\(.*\\)" nil t)
 	(setq title (match-string 2)
@@ -528,6 +526,14 @@ Keys are `frames', `length', `id', `artist', `title', `tracks',
 	  (setq title (substring title (match-end 0))))
 	(push (cons title id) alist))
       alist)))
+
+(defun cddb-generate-index ()
+  "Generate an index based on cddb files."
+  (interactive)
+  (message "Trying to build index.  This will take a while.")
+  (shell-command
+   (format "~/src/cddb/cddb-index %s &"
+	   "/data/music/data/cddb" "/data/music/data/cddb-index")))
 
 (provide 'cddb)
 
