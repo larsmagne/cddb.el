@@ -3,7 +3,8 @@
 $index = $ARGV[1];
 $cddb = $ARGV[0];
 
-system ("find $cddb -type f | xargs grep ^DTITLE | sed 's/DTITLE=//' | sed 's%$cddb%%' > $index");
+chdir $cddb;
+system ("find . | xargs grep ^DTITLE | sed 's/DTITLE=//' | sed 's%$cddb%%' > $index");
 
 open (IN, "$index") || die;
 open (OUT, ">$index.tmp") || die;
@@ -20,10 +21,3 @@ while (<IN>) {
 	$old = $new;
     }
 }
-
-#system ("sort -t : -d -f +1 $index.tmp > $index.sort");
-
-#unlink "$index.tmp";
-
-
-
