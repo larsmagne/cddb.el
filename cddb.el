@@ -532,7 +532,7 @@ Keys are `frames', `length', `id', `artist', `title', `tracks',
   (interactive)
   (message "Trying to build index.  This will take a while.")
   (shell-command
-   (format "~/src/cddb/cddb-index %s &"
+   (format "~/src/cddb.el/cddb-index %s &"
 	   "/data/music/data/cddb" "/data/music/data/cddb-index")))
 
 (provide 'cddb)
