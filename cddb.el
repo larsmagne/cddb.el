@@ -517,7 +517,7 @@ Keys are `frames', `length', `id', `artist', `title', `tracks',
     (with-temp-buffer
       (let ((default-directory "/"))
 	(call-process "grep" nil t nil "-i" (concat ":" artist)
-		      (expand-file-name "cddb-index" cddb-directory)))
+		      (expand-file-name "../cddb-index" cddb-directory)))
       (goto-char (point-min))
       (while (re-search-forward "^\\(^[^:]+\\):\\(.*\\)" nil t)
 	(setq title (match-string 2)
