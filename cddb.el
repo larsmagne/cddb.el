@@ -76,7 +76,7 @@ buffer with the cddb entry will be returned."
       (save-excursion
 	(set-buffer (generate-new-buffer " *cddb*"))
 	(insert-file-contents file)
-	(cons "rock" (current-buffer))))
+	(cons "reggae" (current-buffer))))
      ((let ((cats cddb-categories))
 	(while cats
 	  (setq cat (pop cats))
