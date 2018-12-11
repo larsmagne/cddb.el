@@ -535,6 +535,45 @@ Keys are `frames', `length', `id', `artist', `title', `tracks',
    (format "~/src/cddb.el/cddb-index %s &"
 	   "/data/music/data/cddb" "/data/music/data/cddb-index")))
 
+(defun cddb-fix-various ()
+  (interactive)
+  (save-restriction
+    (narrow-to-region (point) (point-max))
+    (while (re-search-forward "^Track +[0-9]+: '" nil t)
+      (replace-match "" t t))
+    (goto-char (point-min))
+    (while (re-search-forward "' +\\[from " nil t)
+      (replace-match " / " t t))
+    (goto-char (point-min))
+    (while (re-search-forward "\\]" nil t)
+      (replace-match "" t t))
+    (goto-char (point-min))
+    (cddb-reverse-tracks)
+    (goto-char (point-min))
+    (replace-regexp " +" " ")
+    (goto-char (point-min))
+    (replace-regexp "_" " ")
+    (goto-char (point-min))
+    (replace-regexp " +$" "")
+    ))
+
+(defun cddb-fix-case ()
+  "Downcase 'the' and 'and' and stuff."
+  (interactive)
+  (save-excursion
+    (while (re-search-forward "\\b\\(the\\|an\\|a\\|and\\|of\\|to\\|in\\|by\\|is\\|as\\|are\\)\\b"
+			      nil t)
+      (goto-char (match-beginning 0))
+      (if (bolp)
+	  (forward-word 1)
+	(downcase-word 1)))))
+
+(defun cddb-query-discogs ()
+  "Insert a tracklist based on discogs in the current buffer."
+  (interactive)
+  (discogs-find-tracklist (cdr (assq 'artist cddb-data))
+			  (cdr (assq 'title cddb-data))))
+
 (provide 'cddb)
 
 ;;; cddb.el ends here
