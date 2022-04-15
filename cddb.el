@@ -571,8 +571,12 @@ Keys are `frames', `length', `id', `artist', `title', `tracks',
 (defun cddb-query-discogs ()
   "Insert a tracklist based on discogs in the current buffer."
   (interactive)
-  (discogs-find-tracklist (cdr (assq 'artist cddb-data))
-			  (cdr (assq 'title cddb-data))))
+  (goto-char (point-min))
+  (when (re-search-forward "^Title: \\(.*\\)" nil t)
+    (goto-char (point-max))
+    (let ((bits (split-string (match-string 1) " / ")))
+      (dolist (track (discogs-find-tracklist (car bits) (cadr bits)))
+	(insert track "\n")))))
 
 (provide 'cddb)
 
