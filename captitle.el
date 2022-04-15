@@ -28,7 +28,7 @@
 (defvar capitalize-title-uncapitalized-words
   '("a" "an" "the" "and" "or" "nor" "for" "but" "so" "yet"
     "to" "of" "by" "at" "for" "but" "in" "with" "has" "de" "von"
-    "vs" "vs.")
+    "vs" "vs." "is" "on")
   "Words not to be capitalized in a title.")
 
 (defun capitalize-title-upper-case-p (word)
@@ -55,7 +55,7 @@
 	       (t
 		(capitalize word)))
 	      cwords)
-	(incf i))
+	(cl-incf i))
       (mapconcat 'identity (nreverse cwords) " "))))
 
 (provide 'captitle)

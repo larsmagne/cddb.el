@@ -289,12 +289,12 @@ Keys are `frames', `length', `id', `artist', `title', `tracks',
     (insert (format "DYEAR=%s\n" (or (cdr (assq 'year alist)) "")))
     (while (< i ntracks)
       (insert (format "TTITLE%d=%s\n" i (or (nth i tracks) "")))
-      (incf i))
+      (cl-incf i))
     (insert (format "EXTD=%s\n" (or (cdr (assq 'extension alist)) "")))
     (setq i 0)
     (while (< i ntracks)
       (insert (format "EXTT%d=%s\n" i (or (nth i track-extensions) "")))
-      (incf i))
+      (cl-incf i))
     (insert "PLAYORDER=\n")))
 
 (defun cddb-insert-new-data (alist &optional genre)
@@ -311,7 +311,7 @@ Keys are `frames', `length', `id', `artist', `title', `tracks',
     (insert "Tracks:\n")
     (while (< i ntracks)
       (insert (format "%s\n" (or (nth i tracks) "")))
-      (incf i))))
+      (cl-incf i))))
 
 (defun cddb-write-file (file alist)
   "Write ALIST to FILE."
@@ -497,7 +497,7 @@ Keys are `frames', `length', `id', `artist', `title', `tracks',
   (let ((frames (cdr (assoc 'frames entry)))
 	(n 0))
     (dolist (frame frames)
-      (incf n (cddb-id-sum (truncate (/ frame 75)))))
+      (cl-incf n (cddb-id-sum (truncate (/ frame 75)))))
     
     (format "%02x%04x%02x"
 	    (% n 255)
@@ -508,7 +508,7 @@ Keys are `frames', `length', `id', `artist', `title', `tracks',
 (defun cddb-id-sum (n)
   (let ((ret 0))
     (while (> n 0)
-      (incf ret (% n 10))
+      (cl-incf ret (% n 10))
       (setq n (truncate (/ n 10))))
     ret))
 
