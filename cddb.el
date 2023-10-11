@@ -25,7 +25,6 @@
 
 ;;; Code:
 
-(require 'cl)
 (require 'expect)
 (require 'message)
 (require 'captitle)
@@ -73,8 +72,7 @@ buffer with the cddb entry will be returned."
     (cond
      ((file-exists-p
        (setq file (concat cddb-directory "new-cdda/" discid)))
-      (save-excursion
-	(set-buffer (generate-new-buffer " *cddb*"))
+      (with-current-buffer (generate-new-buffer " *cddb*")
 	(insert-file-contents file)
 	(cons "reggae" (current-buffer))))
      ((let ((cats cddb-categories))
@@ -86,8 +84,7 @@ buffer with the cddb entry will be returned."
 	    (setq file nil)))
 	file)
       (when file
-	(save-excursion
-	  (set-buffer (generate-new-buffer " *cddb*"))
+	(with-current-buffer (generate-new-buffer " *cddb*")
 	  (insert-file-contents file)
 	  (cons cat (current-buffer)))))
      (cddb-remote-p
@@ -161,8 +158,7 @@ buffer with the cddb entry will be returned."
 	(expect "^\\."
 	  (let ((buf (current-buffer))
 		(end (1- (point))))
-	    (save-excursion
-	      (set-buffer (generate-new-buffer " *cddb*"))
+	    (with-current-buffer (generate-new-buffer " *cddb*")
 	      (insert-buffer-substring buf beg end)
 	      (goto-char (point-min))
 	      ;; Clean up the data.
@@ -315,8 +311,7 @@ Keys are `frames', `length', `id', `artist', `title', `tracks',
 
 (defun cddb-write-file (file alist)
   "Write ALIST to FILE."
-  (save-excursion
-    (set-buffer (get-buffer-create " *cddb work*"))
+  (with-current-buffer (get-buffer-create " *cddb work*")
     (erase-buffer)
     (cddb-insert alist)
     (write-region (point-min) (point-max) file nil 'silent)
@@ -403,7 +398,7 @@ Keys are `frames', `length', `id', `artist', `title', `tracks',
       (message-mail
        "freedb-submit@freedb.org"
        (concat "cddb " genre " " id))
-      (insert-buffer buf)
+      (insert-buffer-substring buf)
       (message-send))))
 
 (defvar cddb-mode-map nil)
@@ -433,7 +428,7 @@ Keys are `frames', `length', `id', `artist', `title', `tracks',
     (goto-char (point-min))
     (forward-line 3)
     (while (not (eobp))
-      (let* ((line (buffer-substring (point) (point-at-eol)))
+      (let* ((line (buffer-substring (point) (line-end-position)))
 	     (new-line
 	      (if (string-match " / " line)
 		  (mapconcat 'identity
@@ -442,7 +437,7 @@ Keys are `frames', `length', `id', `artist', `title', `tracks',
 			     " / ")
 		(capitalize-title line))))
 	(unless (string= line new-line)
-	  (delete-region (point) (point-at-eol))
+	  (delete-region (point) (line-end-position))
 	  (insert new-line)))
       (forward-line 1))))
 
@@ -456,7 +451,8 @@ Keys are `frames', `length', `id', `artist', `title', `tracks',
 
 (defun cddb-reverse-tracks ()
   (interactive)
-  (replace-regexp "^\\(.*\\) / \\(.*\\)$" "\\2 / \\1"))
+  (while (re-search-forward "^\\(.*\\) / \\(.*\\)$" nil t)
+    (replace-match "\\2 / \\1")))
 
 (defun cddb-merge (ofr frames)
   (dolist (elem frames)
@@ -488,8 +484,7 @@ Keys are `frames', `length', `id', `artist', `title', `tracks',
 	 (entry (cddb-query frames)))
     (if (not entry)
 	(cddb-edit (cdr entry) (car entry))
-      (save-excursion
-	(set-buffer (cdr entry))
+      (with-current-buffer (cdr entry)
 	(cddb-edit (cddb-merge (cddb-parse (current-buffer)) frames)
 		   (car entry))))))
 
@@ -533,7 +528,7 @@ Keys are `frames', `length', `id', `artist', `title', `tracks',
   (message "Trying to build index.  This will take a while.")
   (shell-command
    (format "~/src/cddb.el/cddb-index %s &"
-	   "/data/music/data/cddb" "/data/music/data/cddb-index")))
+	   "/data/music/data/cddb")))
 
 (defun cddb-fix-various ()
   (interactive)
@@ -550,15 +545,18 @@ Keys are `frames', `length', `id', `artist', `title', `tracks',
     (goto-char (point-min))
     (cddb-reverse-tracks)
     (goto-char (point-min))
-    (replace-regexp " +" " ")
+    (while (re-search-forward " +" nil t)
+      (replace-match " "))
     (goto-char (point-min))
-    (replace-regexp "_" " ")
+    (while (re-search-forward "_" nil t)
+      (replace-match " "))
     (goto-char (point-min))
-    (replace-regexp " +$" "")
+    (while (re-search-forward " +$" nil t)
+      (replace-match ""))
     ))
 
 (defun cddb-fix-case ()
-  "Downcase 'the' and 'and' and stuff."
+  "Downcase \"the\" and \"and\" and stuff."
   (interactive)
   (save-excursion
     (while (re-search-forward "\\b\\(the\\|an\\|a\\|and\\|of\\|to\\|in\\|by\\|is\\|as\\|are\\)\\b"
