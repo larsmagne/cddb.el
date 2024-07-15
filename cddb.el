@@ -330,9 +330,9 @@ Keys are `frames', `length', `id', `artist', `title', `tracks',
   (forward-line 2)
   (set-buffer-modified-p nil))
 
-(defun cddb-submit (&optional arg)
+(defun cddb-submit ()
   "Send the entry to CDDB."
-  (interactive "P")
+  (interactive)
   (let ((alist cddb-data)
 	(modified (buffer-modified-p))
 	(genre (message-fetch-field "Genre"))
@@ -371,9 +371,6 @@ Keys are `frames', `length', `id', `artist', `title', `tracks',
 	    (forward-char 78)
 	    (insert "\n" (match-string 1))
 	    (beginning-of-line))))
-      (when (and modified
-		 (not arg))
-	(cddb-send genre))
       (set-buffer-modified-p nil))
     (cddb-write-file (concat cddb-directory "new-cdda/"
 			     (cddb-get 'id alist))
