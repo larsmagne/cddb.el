@@ -559,7 +559,7 @@ Keys are `frames', `length', `id', `artist', `title', `tracks',
   "Downcase \"the\" and \"and\" and stuff."
   (interactive)
   (save-excursion
-    (while (re-search-forward "\\b\\(the\\|an\\|a\\|and\\|of\\|to\\|in\\|by\\|is\\|as\\|are\\)\\b"
+    (while (re-search-forward "\\b\\(the\\|it\\|an\\|a\\|and\\|of\\|to\\|in\\|by\\|is\\|as\\|are\\)\\b"
 			      nil t)
       (goto-char (match-beginning 0))
       (if (bolp)
