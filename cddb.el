@@ -438,6 +438,22 @@ Keys are `frames', `length', `id', `artist', `title', `tracks',
 	  (insert new-line)))
       (forward-line 1))))
 
+(defun cddb-fix-dashed-tracks ()
+  "Some box sets have very dashed names.
+They look like
+
+  Foo bar - Recorded in January - Remix"
+  (interactive)
+  (while (not (eobp))
+    (when (search-forward " - " (pos-eol) t)
+      (save-excursion
+	(replace-match " (")
+	(goto-char (pos-eol))
+	(insert ")")))
+    (when (search-forward " - " (pos-eol) t)
+      (replace-match "-"))
+    (forward-line 1)))
+
 (defun cddb-track-length (track entry)
   "Return the length of TRACK (in bytes) in ENTRY."
   (let ((frames (cddb-get 'frames entry))
